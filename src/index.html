@@ -5,6 +5,30 @@
     <title>Title</title>
 </head>
 <body>
-
+<script src="../components/router.js"></script>
+<script>
+    console.log( new Router({
+        beforeEnterRoute: () => {
+            console.log("enter")
+        },
+        beforeLeaveRoute: () => {
+            console.log("leave")
+        },
+        routes: [
+            {
+                path: "/home",
+                component: "home"
+            },
+            {
+                path: "/home1",
+                component: "home1"
+            },
+            {
+                path: "/home2",
+                component: "home2"
+            }
+        ]
+    }))
+</script>
 </body>
 </html>
