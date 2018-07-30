@@ -12,6 +12,9 @@
                 return null;
             }
             return class2type[class2type.toString.call( data )]
+        },
+        _extend: function ( data ) {
+            return JSON.parse( JSON.stringify( data ) );
         }
     }
 })( window );

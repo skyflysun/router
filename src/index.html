@@ -22,7 +22,7 @@
         routes: [
             {
                 path: "/home",
-                component: "home"
+                component: "<div>tianzehao</div>"
             },
             {
                 path: "/home1",
@@ -31,6 +31,26 @@
                     {
                         path: "/child1",
                         component: "child1"
+                    },
+                    {
+                        path: "/child2",
+                        component: "child1"
+                    },
+                    {
+                        path: "/child3",
+                        component: "child1",
+                        children: [
+                            {
+                                path: "/child-child1",
+                                component: "child1",
+                                children: [
+                                    {
+                                        path: "/child-child3",
+                                        component: "child1"
+                                    },
+                                ]
+                            },
+                        ]
                     }
                 ]
             },
