@@ -25,79 +25,55 @@
             this.appTree(this.options.routes);
             this._init$route();
             this.addEventListener();
-
-
-        },
-        analyzeHash: function () {
-
-
-            //只有端口的情况，加载默认首页
-            if (pathArr.length === 0) {
-                console.warn("enter home");
-                return;
-            }
         },
         renderHtml: function () {
-            let pathArr = this.resolvePath();
+            let pathArr = this.resolvePathArr();
             let AppComponents = this.AppComponents;
-
             for (let key in pathArr) {
-                if (pathArr.hasOwnProperty(key)) {
-                    let rootEl = document.getElementsByTagName("router-view");
-                        console.log( pathArr )
-                        if( AppComponents[ pathArr ] ){
-                            //组件存在
-                            if (!AppComponents[ pathArr ].rendered) {
-                                //初次进入
-                                AppComponents[ pathArr ].rendered = true;
-                                rootEl[0].parentElement.replaceChild(AppComponents[pathArr[key]]["componentDom"], rootEl[0]);
-                            }
-                            else if ( AppComponents[pathArr[key]].rendered ) {
-                                //二次进入
-                                this.hideNotHash(pathArr);
+                if ( pathArr.hasOwnProperty(key) ) {
+                    if( pathArr[key].split("/").length > 2 ){
+                        let rootEl = document.getElementsByTagName("router-view");
+                        if( AppComponents[ pathArr[key] ] ){
+                            if( this.hashChanged( AppComponents[ pathArr[key] ] ) ) {
+                                this.replaceChild( rootEl, this.textToDom(AppComponents[ pathArr[key] ]["component"]), rootEl[0] )
                             }
                         }
-
-                }
-            }
-        },
-        /**
-         * @method: _renderedHtml  对于渲染过的dom处理
-         * @param:
-         * @return:
-         **/
-        _renderedHtml() {
-
-            return
-        },
-        /**
-         * @method: htmlNotHash 隐藏不包含的hash
-         * @param:
-         * @return:
-         **/
-
-        hideNotHash( key ) {
-            let AppComponents = this.AppComponents;
-            for (let key in AppComponents) {
-                if (AppComponents.hasOwnProperty(key)) {
-                    if (!(pathArr.indexOf(key) > -1)) {
-                        console.log(AppComponents[key].componentDom.parentElement, key);
-                        AppComponents[key].componentDom.parentElement.replaceChild(AppComponents[key].comment, AppComponents[key].componentDom)
+                    }
+                    else{
+                        let rootEl = document.getElementById("app");
+                        let oldDom =  rootEl.childNodes[0];
+                        if( this.hashChanged( AppComponents[ pathArr[key] ] ) ){
+                            this.replaceChild( rootEl,this.textToDom(AppComponents[ pathArr[key] ]["component"]), oldDom, true )
+                        }
                     }
                 }
             }
         },
+        /**
+         * @method: replaceChild 因为原生的replaceChild 新旧dom相同的时候不能相互替换
+         * @param: oldDom
+         * @return:   null；
+         **/
+        replaceChild( rootDom , newDom ,oldDom, type ) {
+            let _oldDom = oldDom.cloneNode();
+            _oldDom.innerHTML = "";
+            if( type ){
+                rootDom.replaceChild( _oldDom, oldDom );
+                rootDom.replaceChild( newDom, _oldDom );
+                return;
+            }
+            rootDom[0].parentElement.replaceChild( newDom, oldDom );
+        },
         _init$route: function () {
-            let toPath = this.resolvePath().join();
+            let toPath = this.resolvePathArr().join();
             let _toObj = this.AppComponents[ toPath ] ? this.AppComponents[ toPath ] : this.AppComponents [this.App[0]["path"]] ;
-
             let route = {
                 fullPath: toPath,
-                meta: _toObj.meta, // 可以作为传输的数据
-                name: _toObj.name,
-                params: _toObj.params,
-                path: _toObj.path,
-                query: _toObj.query
+                meta: _toObj.meta || "", // 可以作为传输的数据
+                name: _toObj.name || "",
+                params: _toObj.params || "",
+                path: _toObj.path || "",
+                query: _toObj.query || ""
             };
             this.currentRoute = route;
         },
@@ -116,9 +92,8 @@
                     $routes[key]["comment"] = document.createComment(_uid);
                     $routes[key]["_uid"] = _uid;
                     $routes[key]["_path"] = path + $routes[key]["path"];
-                    $routes[key]["componentDom"] = this.textToDom($routes[key]["component"]);
                     _tempTree[$routes[key]["_path"]] = $routes[key];
-                    if ($routes.hasOwnProperty(key)) {
+                    if ( $routes.hasOwnProperty(key) ) {
                         if (typeof $routes[key]["children"] === "object" && $routes[key] != null) {
                             _forRouter($routes[key]["children"], $routes[key]["_path"]);
                         }
@@ -136,17 +111,28 @@
             let _domWrap = document.createElement("div");
             _domWrap.innerHTML = text;
             return _domWrap.childNodes[0]
-
         },
         addEventListener: function () {
             let _this = this;
             window.onhashchange = function () {
-                _this.hashChanged();
+                _this.renderHtml();
             }
         },
         //获取hash的路径；
         resolvePath: function ( path ) {
-            let pathArr =  path.split("/") || window.location.hash.replace(/#/g, "").split("/");
+            path = path ? path.split("/") : "";
+            let pathArr =  path || window.location.hash.replace(/#/g, "").split("/");
+            let _tempArr = [];
+            pathArr.forEach(function (item, index) {
+                if (item) {
+                    _tempArr.push( "/" + item);
+                }
+            });
+            return _tempArr.join("");
+        },
+        resolvePathArr: function ( path ) {
+            path = path ? path.split("/") : "";
+            let pathArr =  path || window.location.hash.replace(/#/g, "").split("/");
             let _tempArr = [];
             pathArr.forEach(function (item, index) {
                 if (item) {
@@ -161,32 +147,32 @@
          * @return: null
          **/
         getToPath( _toPath  ) {
-            let toPath = _toPath || this.resolvePath().join("") ;
-            let _toObj = this.AppComponents[toPath];
+            let toPath = _toPath || this.resolvePath();
+            let _toObj = this.AppComponents[ toPath ];
             let _obj = {
                 fullPath: toPath,
-                meta: _toObj.meta, // 可以作为传输的数据
-                name: _toObj.name,
-                params: _toObj.params,
-                path: _toObj.path,
-                query: _toObj.query
+                meta: _toObj.meta || {}, // 可以作为传输的数据
+                name: _toObj.name || {},
+                params: _toObj.params || {},
+                path: _toObj.path || {},
+                query: _toObj.query || {}
             }
             return _obj;
         },
 
         /**
-         * @method: hashChanged hash改变时候要做的事情
+         * @method: hashChanged hash改变时渲染页面需要的状态；
          * @param:
-         * @return:
+         * @return: true or false
          **/
 
-        hashChanged() {
-            let toPath = this.getToPath(  );
-            if ( his.AppComponents[ toPath ].beforeRouterEnter ){
-                this.AppComponents[ toPath ].beforeRouterEnter( this.currentRoute , toPath ,this.next);
-                return;
+        hashChanged( component ) {
+            let toPath = this.resolvePathArr(  );
+
+            if ( component.beforeRouterEnter ){
+                return component.beforeRouterEnter( this.currentRoute , toPath ,this.next);
             }
-            this.next(  );
+            return this.next(  );
 
         },
         /**
@@ -196,14 +182,13 @@
          **/
 
         next( obj ) {
-            let _toPath = this.getToPath( obj.path );
             if( obj ){
+                let _toPath = this.getToPath( obj.path );
                 window.location.hash = "#" + obj.path;
-                return
+                return false;
             }
-            this.renderHtml();
-            this.currentRoute = _toPath;
-            return null
+            this.currentRoute = this.getToPath( );
+            return true;
         },
 
 

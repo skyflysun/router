@@ -5,14 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-<div class="app">
-    <router-view></router-view>
+<div id="app">
 </div>
 
 <script src="../components/router.js"></script>
 <script src="../components/until.js"></script>
 <script>
-    console.log( new Router({
+    window.asd =  new Router({
         beforeEnterRoute: () => {
             console.log("enter")
         },
@@ -22,7 +21,7 @@
         routes: [
             {
                 path: "/home",
-                component: "<div>tianzehao</div>"
+                component: "<div>aaaaaaaaaaaaaa</div>"
             },
             {
                 path: "/home1",
@@ -34,7 +33,7 @@
                     },
                     {
                         path: "/child2",
-                        component: "child1"
+                        component: "child31231"
                     },
                     {
                         path: "/child3",
@@ -59,7 +58,8 @@
                 component: "home2"
             }
         ]
-    }))
+    })
+    console.log( asd );
 </script>
 </body>
 </html>
