@@ -8,5 +8,57 @@
 <div id="app">
     bbbbbbbb
 </div>
+<input type="file" id="file">
+
+<script>
+
+    document.getElementById("file").onchange = function(){
+        var file = document.getElementById("file").files[0];
+        //使用文件切片完成后是一个bolb大对象；
+        console.log( file.slice( 0,1000 ) );
+    };
+
+    (function(){
+        var asd = [1,12,1231,231,234,14,47];
+        var asd = [1,12,1231,231,234,14,47];
+        var a = null;
+        var b = null;
+        var i = 0;
+        for( var key in asd ) {
+            for( var sec in asd ){
+                //第一个值大于第二个值
+                if( asd[ key ] < asd[ sec ] ){
+                    a = asd[ sec ]; //小值
+                    asd[ sec ] = asd[ key ];  //大值
+                    asd[ key ] = a;
+
+                }
+                i ++
+            }
+        }
+        console.log( asd ,i);
+    })();
+    (function(){
+        var asd = [1,12,1231,231,234,14,47];
+        var asd = [1,12,1231,231,234,14,47];
+        var a = null;
+        var b = null;
+        var i = 0;
+        for( var key in asd ) {
+            for( var sec = key  ; sec < asd.length; sec++ ){
+                //第一个值大于第二个值
+                if( asd[key] < asd[sec] ){
+                    a = asd[ sec ]; //小值
+                    asd[ sec ] = asd[key];  //大值
+                    asd[ key ] = a;
+                }
+                i ++;
+            }
+        }
+        console.log( asd ,i)
+    })();
+
+
+</script>
 </body>
 </html>
