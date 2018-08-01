@@ -1,5 +1,5 @@
-﻿(function () {
-
+﻿// (function () {
+import until from "../components/until";
     function Router(options) {
         /**
          * @routes
@@ -219,5 +219,6 @@
 
         }
     };
-    window.Router = Router;
-}(window))
+    export default Router;
+//     window.Router = Router;
+// }(window))

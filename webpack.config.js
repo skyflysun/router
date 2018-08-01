@@ -14,7 +14,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 function getLessVariables( ) {
     // console.log(this)
 
-    let _filePath = path.resolve( __dirname,"../src/less/variable.less");
+    let _filePath = path.resolve( __dirname,"./src/less/variable.less");
     var themeContent = fs.readFileSync( _filePath,'utf-8');
     var variables = {};
     themeContent.split('\n').forEach(function(item) {
@@ -138,11 +138,11 @@ module.exports = {
         // //清除dist目录；
         // new CleanWebpackPlugin(['dist']),
         // //压缩js 并开启支持ie8模式；
-        // new UglifyJsPlugin({
-        //     uglifyOptions: {
-        //         ie8: true,
-        //     }
-        // }),
+        new UglifyJsPlugin({
+            uglifyOptions: {
+                ie8: true,
+            }
+        }),
         // new webpack.NamedModulesPlugin(),
 
     ]

@@ -6,60 +6,7 @@
 </head>
 <body>
 <div id="app">
+    bbbbbbbb
 </div>
-
-<script src="../components/router.js"></script>
-<script src="../components/until.js"></script>
-<script>
-    window.asd =  new Router({
-        beforeEnterRoute: () => {
-            console.log("enter")
-        },
-        beforeLeaveRoute: () => {
-            console.log("leave")
-        },
-        routes: [
-            {
-                path: "/home",
-                component: "<div>aaaaaaaaaaaaaa</div>"
-            },
-            {
-                path: "/home1",
-                component: "<div><span>tianzehao</span><router-view></router-view></div>",
-                children: [
-                    {
-                        path: "/child1",
-                        component: "child1"
-                    },
-                    {
-                        path: "/child2",
-                        component: "child31231"
-                    },
-                    {
-                        path: "/child3",
-                        component: "child1",
-                        children: [
-                            {
-                                path: "/child-child1",
-                                component: "child1",
-                                children: [
-                                    {
-                                        path: "/child-child3",
-                                        component: "child1"
-                                    },
-                                ]
-                            },
-                        ]
-                    }
-                ]
-            },
-            {
-                path: "/home2",
-                component: "home2"
-            }
-        ]
-    })
-    console.log( asd );
-</script>
 </body>
 </html>
