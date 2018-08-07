@@ -3,14 +3,17 @@ if( module.hot ){
     module.hot.accept();
 }
 
-console.log(22222222);
 import Router from "../components/router"
 
 window.asd =  new Router({
     routes: [
         {
+            path: "/",
+            component: "<div>aaaaaaaaaaaaaa</div>",
+        },
+        {
             path: "/home",
-            component: "<div>aaaaaaaaaaaaaa</div>"
+            component: "<div>aaaaaaaaaaaaaa</div>",
         },
         {
             path: "/home1",

@@ -1,4 +1,4 @@
-﻿// (function () {
+﻿
 import until from "../components/until";
     function Router(options) {
         /**
@@ -29,7 +29,25 @@ import until from "../components/until";
         renderHtml: function () {
             let pathArr = this.resolvePathArr();
             let AppComponents = this.AppComponents;
+            console.log( pathArr ,"pathArr");
+            console.log( AppComponents ,"组件");
+            if( pathArr.length > 0 ){
+                this._hasHashRenderHtml( pathArr )
+            }
+            else{
+                this._noHashRenderHtml();
+            }
+
+        },
+        /**
+         * @method: _hasHashRenderHtml
+         * @param:   pathArr
+         * @return:   null；
+         **/
+        _hasHashRenderHtml( pathArr ) {
+            let AppComponents = this.AppComponents;
             for (let key in pathArr) {
+                //判断是否是数组本身的属性；
                 if ( pathArr.hasOwnProperty(key) ) {
                     if( pathArr[key].split("/").length > 2 ){
                         let rootEl = document.getElementsByTagName("router-view");
@@ -37,6 +55,9 @@ import until from "../components/until";
                             if( this.hashChanged( AppComponents[ pathArr[key] ] ) ) {
                                 this.replaceChild( rootEl, this.textToDom(AppComponents[ pathArr[key] ]["component"]), rootEl[0] )
                             }
+                        }
+                        else{
+                            console.log( AppComponents[ pathArr[key] ] )
                         }
                     }
                     else{
@@ -47,6 +68,21 @@ import until from "../components/until";
                         }
                     }
                 }
+            }
+            return null;
+        },
+        /**
+         * @method: _noHashRenderHtml  渲染默认页面
+         * @param:
+         * @return:   ；
+         **/
+        _noHashRenderHtml() {
+            let AppComponents = this.AppComponents;
+            let rootEl = document.getElementById("app");
+            let oldDom =  rootEl.childNodes[0];
+            console.log( AppComponents[ "/" ] );
+            if( this.hashChanged( AppComponents[ "/" ] ) ){
+                this.replaceChild( rootEl,this.textToDom( AppComponents[ "/" ]["component"] ), oldDom, true )
             }
         },
         /**
@@ -101,7 +137,6 @@ import until from "../components/until";
                 }
             };
             _forRouter($routes, "", _tempTree);
-            console.log(_tempTree);
             this.App = $routes;
             //构建注
             this.AppComponents = _tempTree;
@@ -128,7 +163,8 @@ import until from "../components/until";
                     _tempArr.push( "/" + item);
                 }
             });
-            return _tempArr.join("");
+            //在没有hash值得时候是显示的默认的也就是根目录下的页面
+            return _tempArr.join("") || "/";
         },
         resolvePathArr: function ( path ) {
             path = path ? path.split("/") : "";
@@ -148,6 +184,7 @@ import until from "../components/until";
          **/
         getToPath( _toPath  ) {
             let toPath = _toPath || this.resolvePath();
+            console.log( this.resolvePath() );
             let _toObj = this.AppComponents[ toPath ];
             let _obj = {
                 fullPath: toPath,
@@ -168,12 +205,10 @@ import until from "../components/until";
 
         hashChanged( component ) {
             let toPath = this.resolvePathArr(  );
-
             if ( component.beforeRouterEnter ){
                 return component.beforeRouterEnter( this.currentRoute , toPath ,this.next);
             }
             return this.next(  );
-
         },
         /**
          * @method: next 路由器的钩子函数只有运行了这个函数才会渲染后面的页面
@@ -220,5 +255,3 @@ import until from "../components/until";
         }
     };
     export default Router;
-//     window.Router = Router;
-// }(window))
